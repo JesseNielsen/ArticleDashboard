@@ -1,0 +1,48 @@
+@page "/editarticle/{Id:int}"
+@inject NavigationManager NavigationManager
+@inject ArticleService ArticleService
+@using ArticleDashboard.Models
+
+<h3>Edit Article</h3>
+
+<EditForm Model="article" OnValidSubmit="HandleValidSubmit" FormName="EditArticleForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Title</label>
+        <InputText @bind-Value="article.Title" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Content</label>
+        <InputTextArea @bind-Value="article.Content" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Published Date</label>
+        <InputDate @bind-Value="article.PublishedDate" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Save</button>
+</EditForm>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Models.Article article;
+
+    protected override void OnInitialized()
+    {
+        article = ArticleService.GetArticleById(Id);
+        if (article == null)
+        {
+            // Handle not found
+        }
+    }
+
+    void HandleValidSubmit()
+    {
+        ArticleService.UpdateArticle(article);
+        NavigationManager.NavigateTo("/dashboard");
+    }
+}

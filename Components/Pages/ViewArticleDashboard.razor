@@ -1,0 +1,62 @@
+@page "/dashboard"
+@inject ArticleService ArticleService
+@inject NavigationManager NavigationManager
+
+<h3>Article Dashboard</h3>
+
+@if (articles == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Published Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in articles)
+            {
+                <tr>
+                    <td>@article.Title</td>
+                    <td>@article.PublishedDate.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => EditArticle(article.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteArticle(article.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @* <button class="btn btn-success" @onclick="CreateNewArticle">New Article</button> *@
+}
+
+@code {
+    private List<Models.Article> articles;
+
+    protected override void OnInitialized()
+    {
+        articles = ArticleService.GetArticles();
+    }
+
+    void EditArticle(int id)
+    {
+        NavigationManager.NavigateTo($"/editarticle/{id}");
+    }
+
+    void DeleteArticle(int id)
+    {
+        ArticleService.DeleteArticle(id);
+        articles = ArticleService.GetArticles(); // Reload articles
+    }
+
+    void CreateNewArticle()
+    {
+        // Navigate to a new article creation page or open a modal
+    }
+}
